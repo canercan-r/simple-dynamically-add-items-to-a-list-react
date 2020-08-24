@@ -7,16 +7,12 @@ class App extends Component {
     Eğer yapılmazsa property'lerde kayıplar yaşanabiliyor. Çünkü burada component'e extends ettiğim için
     component'te yapacağı işleri super(props) ile (bu işleri) sen yap diyorum. */
     this.state = {
-      productItems: [
-        { id: 0, name: 'iPhone', count:2, price: 7000 },
-        { id: 1, name: 'iPad', count:5, price: 5000 },
-        { id: 2, name: 'iPod', count:1, price: 2000 }
-      ],
-      currentItems: {
+      productItems: [],
+      currentItem: {
         id: 0,
-        name:'',
-        count:'',
-        price:''
+        name: '',
+        count: '',
+        price: ''
       }
     }
 
@@ -31,23 +27,22 @@ class App extends Component {
   }
 
   onChange(event) {
+    const updateItem = this.state.currentItem;
+    const updatedNewItem = {...updateItem, id: Date.now(), [event.target.name]: event.target.value};
     this.setState({
-      currentItems: {
-        id: Date.now(),
-        name: event.target.value
-      }
+      currentItem: updatedNewItem
     })
   }
 
   addItem(event) {
     event.preventDefault();
-    const newItem = this.state.currentItems;
-    console.log(newItem);
-    if (newItem.name !== '') {
+    const newItem = this.state.currentItem;
+    console.log('current item', newItem);
+    if (newItem.name) {
       const newItems = [...this.state.productItems, newItem];
       this.setState({
         productItems: newItems,
-        currentItems: {
+        currentItem: {
           id: 0,
           name: '',
           count: '',
@@ -55,27 +50,28 @@ class App extends Component {
         }
       })
     }
+    this.addForm.reset();
   }
 
   render() {
     const {productItems} = this.state;
     return (
       <div className="ui container segment">
-        <form className="ui form" onSubmit={this.addItem}>
+        <form className="ui form" ref={input => this.addForm = input} onSubmit={this.addItem}>
           <h4 className="ui dividing header">Product Information</h4>
           <div className="four fields">
             <div className="field">
               <label htmlFor="productName"> Name </label>
-              <input value={this.state.currentItems.name} onChange={this.onChange} type="text" id="productName" placeholder="Name"/>
+              <input name="name" onChange={event => this.onChange(event)} type="text" placeholder="Name"/>
             </div>
-            {/* <div className="field">
+            <div className="field">
               <label htmlFor="productCount"> Count </label>
-              <input value={this.state.currentItems.count} onChange={(event) => this.setState({currentItems: {count: event.target.value}})} type="number" id="productCount" placeholder="Count" />
+              <input name="count" onChange={event => this.onChange(event)} type="number" placeholder="Count" />
             </div>
             <div className="field">
               <label htmlFor="productPrice"> Price </label>
-              <input value={this.state.currentItems.price} onChange={(event) => this.setState({currentItems: {price: event.target.value}})} type="number" id="productPrice" placeholder="Price" />
-            </div> */}
+              <input name="price" onChange={event => this.onChange(event)} type="number" placeholder="Price" />
+            </div>
             <div className="field">
               <label> &nbsp; </label>
               <button type="submit" className="ui button"> Add </button>
